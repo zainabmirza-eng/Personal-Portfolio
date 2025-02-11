@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useSpring, animated } from "@react-spring/web";
-import TrackVisibility from "react-on-screen";
 import colorSharp from "../assets/img/color-sharp.png";
 
 // A separate component for each skill
