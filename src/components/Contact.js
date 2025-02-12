@@ -1,125 +1,90 @@
 import { useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import contactImg from "../assets/img/contact-img.svg";
-import 'animate.css';
-import TrackVisibility from 'react-on-screen';
+import "animate.css";
+import TrackVisibility from "react-on-screen";
+import "../App.css";
 
 export const Contact = () => {
-  const formInitialDetails = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    message: ''
-  }
-  const [formDetails, setFormDetails] = useState(formInitialDetails);
-  const [buttonText, setButtonText] = useState('Send');
-  const [status, setStatus] = useState({});
+  const [rating, setRating] = useState(0);
+  const [feedback, setFeedback] = useState("");
+  const [status, setStatus] = useState("");
 
-  const onFormUpdate = (category, value) => {
-      setFormDetails({
-        ...formDetails,
-        [category]: value
-      })
-  }
+  const handleRating = (value) => {
+    setRating(value);
+  };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setButtonText("Sending...");
-    let response = await fetch("http://localhost:5000/contact", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-      },
-      body: JSON.stringify(formDetails),
-    });
-    setButtonText("Send");
-    let result = await response.json();
-    setFormDetails(formInitialDetails);
-    if (result.code === 200) {
-      setStatus({ success: true, message: 'Message sent successfully' });
-    } else {
-      setStatus({ success: false, message: 'Something went wrong, please try again later.' });
+    if (rating === 0) {
+      setStatus("Please select a rating.");
+      return;
     }
+    setStatus("Thank you for your feedback!");
+    setRating(0);
+    setFeedback("");
   };
 
   return (
-    <section className="contact" id="connect">
+    <section className="contact" id="rate-us">
       <Container>
         <Row className="align-items-center">
-          <Col size={12} md={6}>
+          <Col xs={12} md={6} className="image-col">
             <TrackVisibility>
-              {({ isVisible }) =>
-                <img className={isVisible ? "animate__animated animate__zoomIn" : ""} src={contactImg} alt="Contact Us" />
-              }
+              {({ isVisible }) => (
+                <img
+                  className={isVisible ? "animate__animated animate__zoomIn contact-img" : "contact-img"}
+                  src={contactImg}
+                  alt="Rate Us"
+                />
+              )}
             </TrackVisibility>
           </Col>
-          <Col size={12} md={6}>
+          <Col xs={12} md={6} className="form-col">
             <TrackVisibility>
-              {({ isVisible }) =>
-                <div className={isVisible ? "animate__animated animate__fadeIn" : ""}>
-                  <h2 className="text-center sm:text-left">Get In Touch</h2>
-                  <form onSubmit={handleSubmit}>
+              {({ isVisible }) => (
+                <div className={isVisible ? "animate__animated animate__fadeIn form-container" : "form-container"}>
+                  <h2 className="contact-title">Rate Us</h2>
+                  <form onSubmit={handleSubmit} className="contact-form">
                     <Row>
-                      <Col size={12} sm={6} className="px-2">
-                        <input
-                          type="text"
-                          value={formDetails.firstName}
-                          placeholder="First Name"
-                          onChange={(e) => onFormUpdate('firstName', e.target.value)}
-                        />
+                      <Col xs={12} className="text-center star-container">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <span
+                            key={star}
+                            className={star <= rating ? "star filled" : "star"}
+                            onClick={() => handleRating(star)}
+                          >
+                            {star <= rating ? "\u2605" : "\u2606"}
+                          </span>
+                        ))}
                       </Col>
-                      <Col size={12} sm={6} className="px-2">
-                        <input
-                          type="text"
-                          value={formDetails.lastName}
-                          placeholder="Last Name"
-                          onChange={(e) => onFormUpdate('lastName', e.target.value)}
-                        />
-                      </Col>
-                      <Col size={12} sm={6} className="px-2">
-                        <input
-                          type="email"
-                          value={formDetails.email}
-                          placeholder="Email Address"
-                          onChange={(e) => onFormUpdate('email', e.target.value)}
-                        />
-                      </Col>
-                      <Col size={12} sm={6} className="px-2">
-                        <input
-                          type="tel"
-                          value={formDetails.phone}
-                          placeholder="Phone No."
-                          onChange={(e) => onFormUpdate('phone', e.target.value)}
-                        />
-                      </Col>
-                      <Col size={12} className="px-2">
+                      <Col xs={12} className="feedback-col">
                         <textarea
-                          rows="6"
-                          value={formDetails.message}
-                          placeholder="Message"
-                          onChange={(e) => onFormUpdate('message', e.target.value)}
+                          rows="4"
+                          className="contact-input"
+                          value={feedback}
+                          placeholder="Your feedback (optional)"
+                          onChange={(e) => setFeedback(e.target.value)}
                         ></textarea>
-                        <button 
-                          type="submit"
-                          className="items-center bg-white hover:bg-gray-100 text-gray-800 font-semibold border border-gray-400 rounded shadow transition-all duration-300 ease-in-out"
-                        >
-                          <span>{buttonText}</span>
+                      </Col>
+                      <Col xs={12} className="text-center button-col">
+                        <button type="submit" className="contact-button">
+                          <span>Submit</span>
                         </button>
                       </Col>
-                      {
-                        status.message &&
-                        <Col>
-                          <p className={status.success === false ? "danger" : "success"}>{status.message}</p>
+                      {status && (
+                        <Col xs={12} className="status-message">
+                          <p className="success-message">{status}</p>
                         </Col>
-                      }
+                      )}
                     </Row>
                   </form>
-                </div>}
+                </div>
+              )}
             </TrackVisibility>
           </Col>
         </Row>
       </Container>
     </section>
-  )
-}
+  );
+};
