@@ -1,5 +1,9 @@
 # Personal Portfolio Website in React
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6e358db820c03a89c53c38a6e8a3504b4bfe1890
 Built using:
 
 - Front-end library: React
